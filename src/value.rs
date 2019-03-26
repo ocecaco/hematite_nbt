@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fmt;
 use std::io;
 
-use byteorder::{BigEndian, WriteBytesExt, ReadBytesExt};
+use byteorder::{LittleEndian, WriteBytesExt, ReadBytesExt};
 
 use error::{Error, Result};
 use raw;
@@ -111,12 +111,12 @@ impl Value {
                 // checking its type.
                 if vals.len() == 0 {
                     try!(dst.write_u8(1));
-                    try!(dst.write_i32::<BigEndian>(0));
+                    try!(dst.write_i32::<LittleEndian>(0));
                 } else {
                     // Otherwise, use the first element of the list.
                     let first_id = vals[0].id();
                     try!(dst.write_u8(first_id));
-                    try!(dst.write_i32::<BigEndian>(vals.len() as i32));
+                    try!(dst.write_i32::<LittleEndian>(vals.len() as i32));
                     for nbt in vals {
                         // Ensure that all of the tags are the same type.
                         if nbt.id() != first_id {
@@ -165,7 +165,7 @@ impl Value {
             0x08 => Ok(Value::String(raw::read_bare_string(&mut src)?)),
             0x09 => { // List
                 let id = try!(src.read_u8());
-                let len = try!(src.read_i32::<BigEndian>()) as usize;
+                let len = try!(src.read_i32::<LittleEndian>()) as usize;
                 let mut buf = Vec::with_capacity(len);
                 for _ in 0..len {
                     buf.push(try!(Value::from_reader(id, src)));
