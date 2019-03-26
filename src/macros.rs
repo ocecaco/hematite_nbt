@@ -84,7 +84,7 @@ macro_rules! return_expr_for_serialized_types_helper {
     };
     ($expr:expr, unit_variant) => {
         return_expr_for_serialized_types_method!{
-            $expr, serialize_unit_variant(&'static str, usize, &'static str)
+            $expr, serialize_unit_variant(&'static str, u32, &'static str)
         }
     };
     ($expr:expr, some) => {
@@ -101,7 +101,7 @@ macro_rules! return_expr_for_serialized_types_helper {
     };
     ($expr:expr, newtype_variant) => {
         return_expr_for_serialized_types_method!{
-            $expr, serialize_newtype_variant(&'static str, usize,
+            $expr, serialize_newtype_variant(&'static str, u32,
                                               &'static str, &__T),
             where: ::serde::ser::Serialize
         }
@@ -109,12 +109,6 @@ macro_rules! return_expr_for_serialized_types_helper {
     ($expr:expr, seq) => {
         return_expr_for_serialized_types_method!{
             $expr, serialize_seq(Option<usize>),
-            result: Self::SerializeSeq
-        }
-    };
-    ($expr:expr, seq_fixed_size) => {
-        return_expr_for_serialized_types_method!{
-            $expr, serialize_seq_fixed_size(usize),
             result: Self::SerializeSeq
         }
     };
@@ -132,7 +126,7 @@ macro_rules! return_expr_for_serialized_types_helper {
     };
     ($expr:expr, tuple_variant) => {
         return_expr_for_serialized_types_method!{
-            $expr, serialize_tuple_variant(&'static str, usize, &'static str,
+            $expr, serialize_tuple_variant(&'static str, u32, &'static str,
                                             usize),
             result: Self::SerializeTupleVariant
         }
@@ -151,7 +145,7 @@ macro_rules! return_expr_for_serialized_types_helper {
     };
     ($expr:expr, struct_variant) => {
         return_expr_for_serialized_types_method!{
-            $expr, serialize_struct_variant(&'static str, usize, &'static str,
+            $expr, serialize_struct_variant(&'static str, u32, &'static str,
                                              usize),
             result: Self::SerializeStructVariant
         }
@@ -170,5 +164,11 @@ macro_rules! return_expr_for_serialized_types_helper {
 macro_rules! return_expr_for_serialized_types {
     ($expr:expr; $($type:tt)*) => {
         $(return_expr_for_serialized_types_helper!{$expr, $type})*
+    };
+}
+
+macro_rules! unrepresentable {
+    ($($type:tt)*) => {
+        $(return_expr_for_serialized_types_helper!{Err(Error::UnrepresentableType("$type")), $type})*
     };
 }

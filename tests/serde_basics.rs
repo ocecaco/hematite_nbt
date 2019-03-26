@@ -3,12 +3,11 @@ extern crate serde_derive;
 extern crate serde;
 
 extern crate nbt;
-extern crate nbt_serde;
 
 use std::collections::HashMap;
 
-use nbt_serde::encode::to_writer;
-use nbt_serde::decode::from_reader;
+use nbt::de::from_reader;
+use nbt::ser::to_writer;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 struct ByteNbt {
@@ -501,9 +500,12 @@ fn serialize_nested_newtype_struct() {
 }
 
 #[test]
-fn deserialize_hashmap() {
+fn serialize_hashmap() {
     let mut nbt = HashMap::new();
     nbt.insert("data".to_string(), 100i8);
+
+    let mut dst = Vec::new();
+    to_writer(&mut dst, &nbt, None).unwrap();
 
     let bytes = vec![
         0x0a,

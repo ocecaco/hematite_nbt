@@ -5,12 +5,15 @@ documentation = "http://docs.piston.rs/hematite_nbt/nbt/"
 repository = "https://github.com/PistonDevelopers/hematite_nbt"
 readme = "README.md"
 license = "MIT"
-version = "0.3.0"
+version = "0.4.0"
 authors = [
     "Fenhl <fenhl@fenhl.net>",
     "Carlos Cobo <toqueteos@gmail.com>",
     "Aaron Jacobs <atheriel@gmail.com>"
 ]
+
+[features]
+default = ["serde"]
 
 [lib]
 name = "nbt"
@@ -19,3 +22,8 @@ path = "src/lib.rs"
 [dependencies]
 byteorder = "1.0.0"
 flate2 = "0.2"
+serde = { version = "1.0", optional = true, features = ["derive"] }
+
+[dev-dependencies]
+serde_derive = "1.0"
+serde_json = "1.0"
